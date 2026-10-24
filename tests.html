@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-tests — The Interplanetary Internet</title>
+<style>
+  body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #04060D; color: #E8ECF4; padding: 24px; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  #summary { font-size: 1.1rem; margin: 16px 0; }
+  ul { list-style: none; padding: 0; }
+  li { padding: 2px 0; font-size: 0.85rem; }
+  .pass { color: #4ADE80; }
+  .fail { color: #FF6B6B; }
+  .name { color: #A9B4C8; }
+</style>
+</head>
+<body>
+<h1>Self-tests (core.js + data.js)</h1>
+<p id="summary">Running…</p>
+<ul id="results"></ul>
+
+<script src="js/core.js"></script>
+<script src="js/data.js"></script>
+<script>
+(function () {
+  'use strict';
+  var IPI = window.IPI;
+  var fmt = IPI.fmt;
+  var results = [];
+  var list = document.getElementById('results');
+
+  function record(pass, name, detail) {
+    results.push({ pass: pass, name: name, detail: detail });
+  }
+
+  function eq(name, actual, expected) {
+    var pass = actual === expected;
+    var detail = pass ? '' : 'expected ' + JSON.stringify(expected) + ' · actual ' + JSON.stringify(actual);
+    record(pass, name, detail);
+  }
+
+  function near(name, actual, expected, relTol) {
+    var tol = relTol * Math.abs(expected);
+    var pass = Math.abs(actual - expected) <= tol;
+    var detail = pass ? '' : 'expected ≈ ' + expected + ' (±' + tol + ') · actual ' + actual;
+    record(pass, name, detail);
+  }
+
+  /* ---- fmt.duration ---- */
+  eq('duration 1.2822203', fmt.duration(1.2822203), '1.28 s');
+  eq('duration 2.5644406', fmt.duration(2.5644406), '2.56 s');
+  eq('duration 0.01858', fmt.duration(0.01858), '18.6 ms');
+  eq('duration 0.13367', fmt.duration(0.13367), '134 ms');
+  eq('duration 1.0007e-8', fmt.duration(1.0007e-8), '10.0 ns');
+  eq('duration 12.34', fmt.duration(12.34), '12.3 s');
+  eq('duration 0', fmt.duration(0), '0 s');
+  eq('duration 60', fmt.duration(60), '1 min');
+  eq('duration 182.126', fmt.duration(182.126), '3 min 2 s');
+  eq('duration 750.519', fmt.duration(750.519), '12 min 31 s');
+  eq('duration 1337.592', fmt.duration(1337.592), '22 min 18 s');
+  eq('duration 1501.04', fmt.duration(1501.04), '25 min 1 s');
+  eq('duration 3599.6', fmt.duration(3599.6), '1 h');
+  eq('duration 3600', fmt.duration(3600), '1 h');
+  eq('duration 3660', fmt.duration(3660), '1 h 1 min');
+  eq('duration 85061', fmt.duration(85061), '23 h 38 min');
+  eq('duration 1537600', fmt.duration(1537600), '17 d 19 h');
+  eq('duration 1171875', fmt.duration(1171875), '13 d 14 h');
+  eq('duration 134009348', fmt.duration(134009348), '4 y 3 mo');
+  eq('duration 268018696', fmt.duration(268018696), '8 y 6 mo');
+  eq('duration 33.97y', fmt.duration(33.97 * 31557600), '34 y');
+  eq('duration 26000y', fmt.duration(26000 * 31557600), '26,000 y');
+  eq('duration 2.5 million y', fmt.duration(2.5e6 * 31557600), '2.5 million y');
+  eq('duration 5.092 million y', fmt.duration(5.092e6 * 31557600), '5.09 million y');
+  eq('duration Infinity', fmt.duration(Infinity), '∞');
+
+  /* ---- fmt.distanceKm ---- */
+  eq('distanceKm 0.003', fmt.distanceKm(0.003), '3 m');
+  eq('distanceKm 384400', fmt.distanceKm(384400), '384,400 km');
+  eq('distanceKm 5570', fmt.distanceKm(5570), '5,570 km');
+  eq('distanceKm 54.6e6', fmt.distanceKm(54600000), '54.6 million km');
+  eq('distanceKm 1 AU', fmt.distanceKm(149597870.7), '149.6 million km');
+  eq('distanceKm 225e6', fmt.distanceKm(225000000), '225 million km');
+  eq('distanceKm 401e6', fmt.distanceKm(401000000), '401 million km');
+  eq('distanceKm 25.5e9', fmt.distanceKm(25500000000), '25.5 billion km');
+  eq('distanceKm 4.017499e13', fmt.distanceKm(4.017499e13), '40.17 trillion km');
+
+  /* ---- fmt.compact ---- */
+  eq('compact 9.592', fmt.compact(9.592), '9.6');
+  eq('compact 5614.7', fmt.compact(5614.7), '5,615');
+  eq('compact 1.0025e9', fmt.compact(1.0025e9), '1 billion');
+  eq('compact 2.5e6', fmt.compact(2.5e6), '2.5 million');
+
+  /* ---- fmt.bitrate ---- */
+  eq('bitrate 160', fmt.bitrate(160), '160 bps');
+  eq('bitrate 267e6', fmt.bitrate(267e6), '267 Mbps');
+  eq('bitrate 1e9', fmt.bitrate(1e9), '1 Gbps');
+  eq('bitrate 1.26e6', fmt.bitrate(1.26e6), '1.26 Mbps');
+
+  /* ---- fmt.elapsed ---- */
+  eq('elapsed 0', fmt.elapsed(0), 'T+00:00:00');
+  eq('elapsed 750', fmt.elapsed(750), 'T+00:12:30');
+  eq('elapsed 86400', fmt.elapsed(86400), 'T+1 d');
+  eq('elapsed 134009348', fmt.elapsed(134009348), 'T+4 y 3 mo');
+
+  /* ---- fmt.percentOfC ---- */
+  eq('percentOfC 1e-6', fmt.percentOfC(1e-6), '99.9999%');
+  eq('percentOfC 0.1', fmt.percentOfC(0.1), '90.0%');
+  eq('percentOfC 1e-2', fmt.percentOfC(1e-2), '99.0%');
+
+  /* ---- fmt.multiplierReadout ---- */
+  eq('multiplierReadout 1', fmt.multiplierReadout(1),
+     'Real time — 1 second of your time = 1 second of simulated time');
+  eq('multiplierReadout 100', fmt.multiplierReadout(100),
+     '1 second of your time = 1 min 40 s of simulated time');
+  // Exact algorithm of Section 3.3 rounds 1e7 s to "115 d 18 h" (see README
+  // "Spec conflicts": Section 10.2 printed "115 d 17 h").
+  eq('multiplierReadout 10M', fmt.multiplierReadout(10000000),
+     '1 second of your time = 115 d 18 h of simulated time');
+
+  /* ---- Physics / data ---- */
+  near('moon one-way', 384400 / 299792.458, 1.28222, 0.0005);
+  near('mars one-way closest', 54600000 / 299792.458, 182.126, 0.0005);
+  near('mars one-way average', 225000000 / 299792.458, 750.519, 0.0005);
+  near('mars one-way farthest', 401000000 / 299792.458, 1337.592, 0.0005);
+  near('proxima one-way', 4.2465 * 9460730472580.8 / 299792.458, 134009348, 0.0005);
+  near('light laps', 299792.458 / 40075, 7.4807, 0.0005);
+  near('fiber speed', 299792.458 / 1.4682, 204190, 0.001);
+  near('mars preset average', IPI.MARS_T_AVG, 0.49191, 0.0005);
+
+  var g1 = IPI.physics.gammaOf(0.1);
+  near('gamma eps=0.1', g1, 2.294, 0.001);
+  near('KE eps=0.1', IPI.physics.keOf(g1, 1), 1.163e17, 0.005);
+  near('gamma eps=1e-6', IPI.physics.gammaOf(1e-6), 707.1, 0.001);
+  near('gamma eps=1e-12', IPI.physics.gammaOf(1e-12), 7.071e5, 0.001);
+
+  near('mars theta t=0', IPI.physics.marsTheta(0), 0, 1e-9);
+  near('mars theta t=1', IPI.physics.marsTheta(1), Math.PI, 1e-9);
+
+  near('causality u_A', IPI.physics.relAdd(-2, 0.9), 1.375, 0.0005);
+  near('causality tD', 1 + -2 / IPI.physics.relAdd(-2, 0.9), -0.4545, 0.0005);
+
+  /* Page-load timeline totals (Section 8.7.A). Moon value follows the exact
+     duration algorithm (see README "Spec conflicts"). */
+  eq('page-load 4R mars', fmt.duration(4 * 2 * (225000000 / 299792.458)), '1 h 40 min');
+  eq('page-load R mars', fmt.duration(2 * (225000000 / 299792.458)), '25 min 1 s');
+  eq('page-load 4R moon', fmt.duration(4 * 2 * (384400 / 299792.458)), '10.3 s');
+  eq('page-load 4R proxima', fmt.duration(4 * 2 * (4.2465 * 31557600)), '34 y');
+
+  /* Ladder categories */
+  eq('ladder moon category', IPI.ladderCategory(2 * (384400 / 299792.458)).text, 'Walkie-talkie');
+  eq('ladder sun category', IPI.ladderCategory(2 * (149597870.7 / 299792.458)).text, 'Slow messaging');
+  eq('ladder jupiter category', IPI.ladderCategory(2 * (778500000 / 299792.458)).text, 'Email-style');
+  eq('ladder proxima category', IPI.ladderCategory(2 * (4.2465 * 31557600)).text, 'Letters');
+  eq('ladder london-ny category', IPI.ladderCategory(2 * (5570 / 299792.458)).text, 'Natural voice call');
+
+  /* Traveller times to Proxima (±0.5 %) */
+  var proxKm = 4.2465 * 9460730472580.8;
+  near('parker to proxima (y)', proxKm / 192 / 31557600, 6630, 0.005);
+  near('voyager to proxima (y)', proxKm / 17 / 31557600, 74900, 0.005);
+  near('jet to proxima (y)', proxKm / 0.25 / 31557600, 5.09e6, 0.005);
+
+  /* Traveller display text */
+  eq('traveller speed light', fmt.travellerSpeed(299792.458), '299,792 km/s');
+  eq('traveller speed parker', fmt.travellerSpeed(192), '192 km/s');
+  eq('traveller speed jet', fmt.travellerSpeed(0.25), '900 km/h');
+  eq('traveller pct light', fmt.percentOfLight(299792.458), '100%');
+  eq('traveller pct parker', fmt.percentOfLight(192), '0.064%');
+
+  /* Ladder distance text */
+  eq('ladder dist proxima', IPI.ladderDistanceText(IPI.LADDER[13]), '4.2465 light-years');
+  eq('ladder dist sirius', IPI.ladderDistanceText(IPI.LADDER[14]), '8.611 light-years');
+  eq('ladder dist center', IPI.ladderDistanceText(IPI.LADDER[15]), '26,000 light-years');
+  eq('ladder dist andromeda', IPI.ladderDistanceText(IPI.LADDER[16]), '2,500,000 light-years');
+
+  /* Chat reply rules: first match wins, placeholders substituted */
+  var r = IPI.chooseReply('moon', 'hello there', 384400 / 299792.458, 0);
+  eq('chat rule hi (moon)', r.text.indexOf('walkie-talkies') >= 0, true);
+  var rf = IPI.chooseReply('moon', 'zzz qqq', 384400 / 299792.458, 0);
+  eq('chat fallback (moon)', rf.text, 'Copy that. Say again if you need to — it only costs us 2.56 s.');
+  var rf2 = IPI.chooseReply('moon', 'zzz qqq', 384400 / 299792.458, 1);
+  eq('chat fallback cycles (moon)', rf2.text, 'Interesting! Tell me more.');
+
+  /* ---- Render ---- */
+  var passed = 0, failed = 0;
+  for (var i = 0; i < results.length; i++) {
+    var res = results[i];
+    var li = document.createElement('li');
+    if (res.pass) {
+      passed++;
+      li.className = 'pass';
+      li.textContent = 'PASS  ' + res.name;
+    } else {
+      failed++;
+      li.className = 'fail';
+      li.textContent = 'FAIL  ' + res.name + ' — ' + res.detail;
+    }
+    list.appendChild(li);
+  }
+  var summary = document.getElementById('summary');
+  summary.textContent = passed + ' passed, ' + failed + ' failed';
+  summary.className = failed ? 'fail' : 'pass';
+})();
+</script>
+</body>
+</html>

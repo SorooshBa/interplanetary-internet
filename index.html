@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Interplanetary Internet — An Interactive Guide</title>
+<meta name="description" content="Send packets to the Moon, Mars and Proxima Centauri at the speed of light, chat with a delay, and learn why nothing is faster than light — and how real space networks work around it.">
+<meta name="theme-color" content="#04060D">
+<meta property="og:title" content="The Interplanetary Internet — An Interactive Guide">
+<meta property="og:description" content="Send packets to the Moon, Mars and Proxima Centauri at the speed of light, chat with a delay, and learn why nothing is faster than light — and how real space networks work around it.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2304060D'/%3E%3Ccircle cx='9' cy='23' r='4' fill='%233FA0FF'/%3E%3Ccircle cx='24' cy='9' r='3' fill='%23E8845A'/%3E%3Cpath d='M12 20 L21 12' stroke='%235CE1E6' stroke-width='2' stroke-linecap='round' stroke-dasharray='1 3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<canvas id="starfield" aria-hidden="true"></canvas>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 32 32" width="22" height="22" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="23" r="4" fill="#3FA0FF"></circle>
+        <circle cx="24" cy="9" r="3" fill="#E8845A"></circle>
+        <path d="M12 20 L21 12" stroke="#5CE1E6" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 3" fill="none"></path>
+      </svg>
+      <span class="brand-text">Interplanetary Internet</span>
+    </a>
+    <nav class="nav-links" aria-label="Page sections">
+      <a href="#simulator">Simulator</a>
+      <a href="#chat">Chat</a>
+      <a href="#light">Light</a>
+      <a href="#limit">Limit</a>
+      <a href="#dtn">Real network</a>
+      <a href="#quiz">Quiz</a>
+    </nav>
+  </div>
+  <div class="nav-progress" id="nav-progress" aria-hidden="true"></div>
+</header>
+
+<main id="main">
+
+<noscript>
+  <div class="noscript-banner">This guide is interactive and needs JavaScript. The text below is still readable.</div>
+</noscript>
+
+<!-- ============================== HERO ============================== -->
+<section id="hero" class="hero" aria-labelledby="hero-title">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow">AN INTERACTIVE GUIDE TO</p>
+      <h1 id="hero-title">The Interplanetary Internet</h1>
+      <p class="lead">A ping to the Moon takes 2.6 seconds. A ping to Mars takes about 25 minutes. A ping to the nearest star takes more than 8 years. This page lets you send packets across space at real speed, chat with a delay, and find out why nothing — not even the best internet imaginable — can beat the speed of light.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#simulator">Start the journey</a>
+        <a class="btn btn-secondary" href="#chat">Jump to the chat</a>
+      </div>
+      <div class="hero-tiles">
+        <div class="stat-tile">
+          <div class="tile-track"><span class="tile-packet" style="animation-duration:1.28s"></span></div>
+          <p class="stat-label">Earth → Moon</p>
+          <p class="stat-value mono" id="hero-val-moon">—</p>
+          <p class="stat-note">one-way light time</p>
+        </div>
+        <div class="stat-tile">
+          <div class="tile-track"><span class="tile-packet" style="animation-duration:7.5s"></span></div>
+          <p class="stat-label">Earth → Mars</p>
+          <p class="stat-value mono" id="hero-val-mars">—</p>
+          <p class="stat-note">one-way, average · ranges from 3 to 22 min</p>
+        </div>
+        <div class="stat-tile">
+          <div class="tile-track"><span class="tile-packet" style="animation-duration:14s"></span></div>
+          <p class="stat-label">Earth → Proxima Centauri</p>
+          <p class="stat-value mono" id="hero-val-proxima">—</p>
+          <p class="stat-note">one-way · 4.2465 light-years</p>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true">
+      <span>Scroll</span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PROBLEM ============================== -->
+<section id="problem" class="section" aria-labelledby="problem-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">01 · THE PROBLEM</p>
+      <h2 id="problem-title">Why the internet breaks in space</h2>
+      <p class="lead">The internet you use every day was designed for a world where a signal crosses the planet in a fraction of a second. Put a few million kilometers in the way and its basic assumptions fall apart.</p>
+    </div>
+
+    <div class="cards-grid reveal">
+      <div class="card">
+        <svg class="card-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="#5CE1E6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="16" cy="18" r="10"></circle>
+          <path d="M16 18V12"></path>
+          <path d="M12 4h8"></path>
+          <path d="M16 4v4"></path>
+          <path d="M25 9l2-2"></path>
+        </svg>
+        <h3>Distance creates delay</h3>
+        <p>Signals travel at a finite speed. The farther away the other end is, the longer every message takes — no matter how good your equipment is.</p>
+      </div>
+      <div class="card">
+        <svg class="card-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="#5CE1E6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 11h24"></path>
+          <path d="M4 21h24"></path>
+          <path d="M8 11v10"></path>
+          <path d="M24 11v10"></path>
+          <path d="M14 16h8"></path>
+          <path d="M19 13l3 3-3 3"></path>
+        </svg>
+        <h3>Latency is not bandwidth</h3>
+        <p>Bandwidth is how much data you can send per second. Latency is how long the first bit takes to arrive. Engineers keep increasing bandwidth. They cannot reduce the latency that distance imposes.</p>
+      </div>
+      <div class="card">
+        <svg class="card-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="#5CE1E6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="8" width="24" height="16" rx="2"></rect>
+          <path d="M4 10l12 9 12-9"></path>
+        </svg>
+        <h3>Conversations become correspondence</h3>
+        <p>Around the Moon you can still talk, with a pause. At Mars you exchange messages, like email. At another star you write letters.</p>
+      </div>
+    </div>
+
+    <div class="card reveal terms-card">
+      <h3>Six words you'll need</h3>
+      <dl class="terms">
+        <dt>Latency</dt>
+        <dd>The time it takes for data to get from one place to another.</dd>
+        <dt>One-way delay (OWD)</dt>
+        <dd>Latency in one direction. In space, this is the light travel time.</dd>
+        <dt>Round-trip time (RTT)</dt>
+        <dd>The time for a message to reach the destination and for the reply to come back. About twice the one-way delay.</dd>
+        <dt>Bandwidth</dt>
+        <dd>How many bits per second a link can carry.</dd>
+        <dt>Packet</dt>
+        <dd>A small chunk of data sent across a network.</dd>
+        <dt>Light-time</dt>
+        <dd>The time light needs to travel a given distance. It is the best latency physics will ever allow.</dd>
+      </dl>
+    </div>
+
+    <div class="callout reveal">
+      <p><strong>How to use this page:</strong> Everything below is interactive. Pick a destination, press the buttons, change the speed. Scroll on for the physics, then for the clever tricks real engineers use to make the internet work anyway.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SIMULATOR ============================== -->
+<section id="simulator" class="section" aria-labelledby="simulator-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">02 · PACKET SIMULATOR</p>
+      <h2 id="simulator-title">Send a packet across space</h2>
+      <p class="lead">Choose a destination and press Send. A single packet leaves Earth at the speed of light, and you watch it arrive in real time — or fast-forwarded up to 100,000,000×.</p>
+    </div>
+
+    <div class="widget reveal">
+      <div class="sim-topbar">
+        <div id="sim-tabs" role="presentation"></div>
+        <span id="sim-badge" class="badge badge-paused"></span>
+      </div>
+
+      <canvas id="sim-canvas" class="sim-canvas" role="img" aria-label="Diagram: a packet travels from Earth to Mars."></canvas>
+      <p class="canvas-caption">Not to scale: the real gap would be thousands of times wider than this screen. Read the ticks for real distances. Moon and Mars are drawn at roughly the right size relative to each other.</p>
+
+      <div class="controls-row">
+        <button type="button" id="sim-send" class="btn btn-primary">Send packet</button>
+        <button type="button" id="sim-ping" class="btn btn-secondary">Ping (round trip)</button>
+        <button type="button" id="sim-pause" class="btn btn-secondary">Pause</button>
+        <button type="button" id="sim-reset" class="btn btn-secondary">Reset</button>
+      </div>
+
+      <div class="speed-block">
+        <p class="control-label" id="sim-speed-label">Speed</p>
+        <div id="sim-speed-chips" aria-labelledby="sim-speed-label"></div>
+        <p class="speed-readout mono" id="sim-speed-readout"></p>
+        <div class="callout callout--warn" id="sim-slow-warning" hidden></div>
+      </div>
+
+      <div class="card mars-panel" id="sim-mars-panel" hidden>
+        <h3>Where is Mars?</h3>
+        <div class="mars-controls">
+          <div class="mars-slider-row">
+            <label for="mars-slider" class="control-label">Distance between Earth and Mars</label>
+            <input type="range" id="mars-slider" min="0" max="1000" step="1" value="492">
+            <p class="mars-dist mono" id="mars-dist-text"></p>
+          </div>
+          <div id="mars-presets" role="presentation"></div>
+        </div>
+        <canvas id="mars-canvas" class="mars-canvas" role="img" aria-label="Diagram: positions of Earth and Mars around the Sun."></canvas>
+        <div class="callout callout--bad" id="mars-conjunction" hidden>
+          <p>Solar conjunction: the Sun is in the way. Radio contact is scrambled for about two weeks.</p>
+        </div>
+        <p class="canvas-caption">Schematic view from above the Sun. Orbits are drawn as circles, so distances are approximate.</p>
+      </div>
+
+      <div class="sim-two-col">
+        <div class="card">
+          <h3>Live readout</h3>
+          <dl class="readout">
+            <dt>Distance</dt><dd class="mono" id="sim-read-distance">—</dd>
+            <dt>One-way delay</dt><dd class="mono" id="sim-read-owd">—</dd>
+            <dt>Round-trip time</dt><dd class="mono" id="sim-read-rtt">—</dd>
+            <dt>Simulated time elapsed</dt><dd class="mono" id="sim-read-elapsed">—</dd>
+            <dt>Latest packet</dt><dd class="mono" id="sim-read-latest">—</dd>
+          </dl>
+          <h4>Recently arrived</h4>
+          <ul class="mini-list" id="sim-recent"><li class="dim">Nothing has arrived yet.</li></ul>
+        </div>
+        <div class="card">
+          <div class="card-head-row">
+            <h3>Ping terminal</h3>
+            <button type="button" id="sim-clear" class="btn btn-secondary btn-small">Clear</button>
+          </div>
+          <div id="sim-terminal" class="terminal" aria-label="Ping output"></div>
+          <p class="hint">Most ping tools give up after a few seconds. On Mars, the answer is still on its way.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Packets in flight</h3>
+        <div id="sim-packets" class="packets-list"></div>
+      </div>
+
+      <div class="cards-grid-three">
+        <div class="card">
+          <h3>How far is it?</h3>
+          <dl class="readout">
+            <dt>Distance</dt><dd class="mono" id="sim-scale-distance">—</dd>
+            <dt>In laps around Earth</dt><dd class="mono" id="sim-scale-laps">—</dd>
+            <dt>Light covers it in</dt><dd class="mono" id="sim-scale-light">—</dd>
+          </dl>
+          <p class="dim">In one second, light circles the Earth 7.48 times.</p>
+        </div>
+        <div class="card">
+          <h3>What else could get there?</h3>
+          <table class="data-table" id="sim-travellers">
+            <thead><tr><th scope="col">Traveler</th><th scope="col">Speed</th><th scope="col">Time to get there</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <p class="footnote">Speeds are illustrative. Parker's record speed is only reached close to the Sun.</p>
+        </div>
+        <div class="card">
+          <h3>What would a conversation feel like?</h3>
+          <p id="sim-conv-text"></p>
+        </div>
+      </div>
+
+      <h3 class="subhead" id="sim-about-title">About Mars</h3>
+      <div class="cards-grid" id="sim-facts"></div>
+
+      <div class="notes">
+        <p>The simulation pauses while this browser tab is in the background.</p>
+        <p>Delays are the best case physics allows: they ignore processing time, relays, and weather.</p>
+      </div>
+
+      <div id="sim-live" class="visually-hidden" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CHAT ============================== -->
+<section id="chat" class="section" aria-labelledby="chat-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">03 · CHAT ACROSS SPACE</p>
+      <h2 id="chat-title">Chat across space</h2>
+      <p class="lead">Send a message and watch it travel. Notice when each message is actually received — and, more surprisingly, when you find out that it was.</p>
+    </div>
+
+    <div class="widget reveal">
+      <div class="sim-topbar">
+        <div id="chat-tabs" role="presentation"></div>
+        <span id="chat-badge" class="badge badge-paused"></span>
+      </div>
+
+      <div class="chat-controls">
+        <div id="chat-mars" class="chat-mars" role="presentation" hidden></div>
+        <p class="hint" id="chat-mars-hint" hidden>Distance changes affect new messages only.</p>
+        <div class="speed-block">
+          <p class="control-label" id="chat-speed-label">Speed</p>
+          <div id="chat-speed-chips" aria-labelledby="chat-speed-label"></div>
+          <p class="speed-readout mono" id="chat-speed-readout"></p>
+          <div class="callout callout--warn" id="chat-slow-warning" hidden></div>
+        </div>
+        <div class="controls-row">
+          <button type="button" id="chat-pause" class="btn btn-secondary">Pause</button>
+          <button type="button" id="chat-reset" class="btn btn-secondary">Reset conversation</button>
+        </div>
+      </div>
+
+      <div class="lane card" aria-hidden="true">
+        <div class="lane-track">
+          <span class="lane-end" id="chat-lane-out-from">Earth</span>
+          <div class="lane-line" id="chat-track-out"></div>
+          <span class="lane-end" id="chat-lane-out-to">Mars</span>
+        </div>
+        <div class="lane-track">
+          <span class="lane-end" id="chat-lane-in-from">Mars</span>
+          <div class="lane-line" id="chat-track-back"></div>
+          <span class="lane-end" id="chat-lane-in-to">Earth</span>
+        </div>
+      </div>
+
+      <div class="chat-panes">
+        <div class="card phone-pane">
+          <div class="phone-head">
+            <span class="avatar avatar-you" aria-hidden="true">YOU</span>
+            <div class="phone-id">
+              <p class="phone-name">You</p>
+              <p class="phone-role">Earth</p>
+            </div>
+          </div>
+          <p class="phone-badge" id="chat-earth-badge"></p>
+          <div class="phone-messages" id="chat-earth-pane" role="log" aria-label="Your conversation"></div>
+          <p class="phone-footer mono" id="chat-earth-clock"></p>
+        </div>
+        <div class="card phone-pane">
+          <div class="phone-head">
+            <span class="avatar" id="chat-dest-avatar" aria-hidden="true">LP</span>
+            <div class="phone-id">
+              <p class="phone-name" id="chat-dest-name">Cmdr. Lena Park</p>
+              <p class="phone-role" id="chat-dest-role">Jezero Base · Mars</p>
+            </div>
+            <span class="phone-status">Online</span>
+          </div>
+          <p class="phone-badge" id="chat-dest-badge"></p>
+          <div class="phone-messages" id="chat-dest-pane" role="log" aria-label="Their side of the conversation"></div>
+          <p class="phone-footer mono" id="chat-dest-clock"></p>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <div id="chat-quick" class="quick-chips" aria-label="Quick messages"></div>
+        <div class="input-row">
+          <input type="text" id="chat-input" maxlength="140" aria-label="Message" placeholder="Type a message to Lena…">
+          <button type="button" id="chat-send" class="btn btn-primary">Send</button>
+        </div>
+        <p class="char-counter mono" id="chat-counter">0/140</p>
+        <div class="callout callout--fact" id="chat-tip" hidden>
+          <p>Tip: in deep-space chat you can't wait for a reply before writing the next message. People send complete, self-contained messages — and replies arrive in the order they were written, not the order you wish.</p>
+        </div>
+      </div>
+
+      <div class="sim-two-col">
+        <div class="card">
+          <h3>Conversation stats</h3>
+          <dl class="readout">
+            <dt>Messages sent</dt><dd class="mono" id="chat-stat-sent">0</dd>
+            <dt>Replies received</dt><dd class="mono" id="chat-stat-replies">0</dd>
+            <dt>Round-trip time</dt><dd class="mono" id="chat-stat-rtt">—</dd>
+            <dt>Fastest possible answer to a new message</dt><dd class="mono" id="chat-stat-fastest">—</dd>
+            <dt>Time until your latest reply</dt><dd class="mono" id="chat-stat-latest">—</dd>
+          </dl>
+        </div>
+        <div class="card">
+          <h3>What happened, in order</h3>
+          <ol class="timeline" id="chat-timeline"><li class="dim">Events will appear here as messages travel.</li></ol>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>Sent ≠ received ≠ delivered</strong> — Your message arrives after one trip. But you only find out it arrived after the delivery receipt makes the trip back — a second full delay. Everything you see from the other side is old news, by exactly one trip.</p>
+      </div>
+
+      <div id="chat-live" class="visually-hidden" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== LIGHT ============================== -->
+<section id="light" class="section" aria-labelledby="light-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">04 · THE SPEED OF LIGHT</p>
+      <h2 id="light-title">299,792 kilometers per second</h2>
+      <p class="lead">That number decides everything on this page. It is the fastest speed anything can travel — and the reason a message to Mars can never arrive in under three minutes.</p>
+    </div>
+
+    <!-- A. Light laps -->
+    <div class="sub-block reveal">
+      <h3>Light, lap by lap</h3>
+      <div class="lap-layout">
+        <div class="lap-text">
+          <p class="big-number mono"><span id="lap-big">299,792.458</span><span class="big-unit">km/s</span></p>
+          <p>Exactly 299,792,458 meters per second — by definition. Since 1983 the meter itself is defined using this number.</p>
+          <p>In a single second, light could circle the Earth 7.48 times. And yet it still needs 1.28 seconds to reach the Moon.</p>
+          <div id="lap-mode" role="presentation"></div>
+          <p class="mono lap-counter" id="lap-counter">Laps completed: 0</p>
+          <p class="hint" id="lap-reduced" hidden>Animation disabled by your system settings.</p>
+        </div>
+        <canvas id="lap-canvas" class="lap-canvas" role="img" aria-label="Animation: a dot of light circling the Earth 7.48 times per second"></canvas>
+      </div>
+    </div>
+
+    <!-- B. The Light Race -->
+    <div class="sub-block reveal">
+      <h3>The Light Race</h3>
+      <p class="intro">Who gets there first? Choose a destination, press Start, and speed up time to watch the slower racers finish.</p>
+      <div class="race-controls">
+        <div id="race-tabs" role="presentation"></div>
+        <div class="controls-row">
+          <button type="button" id="race-start" class="btn btn-primary">Start race</button>
+          <button type="button" id="race-reset" class="btn btn-secondary">Reset</button>
+        </div>
+        <div class="speed-block">
+          <p class="control-label" id="race-speed-label">Speed</p>
+          <div id="race-speed-chips" aria-labelledby="race-speed-label"></div>
+          <p class="speed-readout mono" id="race-speed-readout"></p>
+          <span id="race-badge" class="badge badge-paused"></span>
+        </div>
+      </div>
+      <p class="mono race-clock" id="race-clock">Race clock: T+00:00:00</p>
+      <div id="race-lanes" class="race-lanes"></div>
+      <div class="callout callout--fact">
+        <p>Notice: radio waves and light in empty space are the same thing — both are electromagnetic waves, and both travel at exactly c. A radio signal to Mars is not 'slower' than a laser. A laser just carries more data.</p>
+      </div>
+    </div>
+
+    <!-- C. Latency Ladder -->
+    <div class="sub-block reveal">
+      <h3>The Latency Ladder</h3>
+      <p class="intro">One-way light time from Earth to everything from your living room to another galaxy. The bars use a logarithmic scale: every step to the right is a much bigger unit of time.</p>
+      <div class="ladder" id="ladder">
+        <div class="ladder-ruler" id="ladder-ruler" aria-hidden="true"></div>
+        <div class="ladder-head" aria-hidden="true">
+          <span>Where</span><span></span><span>One-way</span><span>Round trip</span><span>Feels like</span>
+        </div>
+        <div id="ladder-rows"></div>
+      </div>
+    </div>
+
+    <!-- D. Bigger pipe, same delay -->
+    <div class="sub-block reveal">
+      <h3>Bigger pipe, same delay</h3>
+      <p class="intro">You can keep buying a bigger pipe. You cannot buy a shorter one. Slide the bandwidth up and watch where the time goes.</p>
+      <div class="card bp-widget">
+        <div class="bp-controls">
+          <div class="bp-control">
+            <p class="control-label" id="bp-dest-label">Destination</p>
+            <div id="bp-dest" role="presentation"></div>
+          </div>
+          <div class="bp-control">
+            <p class="control-label" id="bp-size-label">File size</p>
+            <div id="bp-size" role="presentation"></div>
+          </div>
+          <div class="bp-control bp-slider-control">
+            <label class="control-label" for="bp-slider">Bandwidth</label>
+            <input type="range" id="bp-slider" min="2" max="13" step="0.1" value="6">
+            <p class="mono bp-bps" id="bp-bps-label">1 Mbps</p>
+          </div>
+        </div>
+        <div class="controls-row">
+          <button type="button" id="bp-preset-voyager" class="btn btn-secondary btn-small">Voyager 1 (160 bps)</button>
+          <button type="button" id="bp-preset-laser" class="btn btn-secondary btn-small">Laser demo (267 Mbps)</button>
+          <button type="button" id="bp-preset-fiber" class="btn btn-secondary btn-small">Home fiber (1 Gbps)</button>
+        </div>
+        <div class="bp-bar" id="bp-bar">
+          <div class="bp-seg bp-travel" id="bp-bar-travel"><span id="bp-travel-label"></span></div>
+          <div class="bp-seg bp-transfer" id="bp-bar-transfer"><span id="bp-transfer-label"></span></div>
+        </div>
+        <dl class="readout bp-readout">
+          <dt>Light travel</dt><dd class="mono" id="bp-read-travel">—</dd>
+          <dt>Transfer time</dt><dd class="mono" id="bp-read-transfer">—</dd>
+          <dt>Total</dt><dd class="mono" id="bp-read-total">—</dd>
+        </dl>
+        <div class="callout" id="bp-message"></div>
+        <p class="dim">Simplified: one big transfer, no protocol overhead, no waiting for acknowledgments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== LIMIT ============================== -->
+<section id="limit" class="section" aria-labelledby="limit-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">05 · THE COSMIC SPEED LIMIT</p>
+      <h2 id="limit-title">Why nothing is faster than light</h2>
+      <p class="lead">“Just build a faster connection” solves every other problem in networking. Here is why it can't solve this one.</p>
+    </div>
+
+    <!-- A. Energy wall -->
+    <div class="sub-block reveal">
+      <h3>The energy wall</h3>
+      <p>At everyday speeds, more energy means more speed. Near light speed the rules change: the faster you go, the more energy every extra bit of speed costs. Push anything with mass toward light speed and the energy needed grows without limit.</p>
+      <p>Drag the slider to speed up a 1 kg object. Each step to the right gets you ten times closer to light speed than the last.</p>
+      <div class="card wall-widget">
+        <div class="wall-slider-row">
+          <span class="wall-end">At rest</span>
+          <input type="range" id="wall-slider" min="0" max="1" step="0.001" value="0.25" aria-label="Speed slider">
+          <span class="wall-end">99.9999999999% of light speed</span>
+        </div>
+        <div class="wall-grid">
+          <div class="wall-tile"><p class="stat-label">Speed</p><p class="stat-value mono" id="wall-speed">—</p></div>
+          <div class="wall-tile"><p class="stat-label">Gap to light speed</p><p class="stat-value mono" id="wall-gap">—</p></div>
+          <div class="wall-tile"><p class="stat-label">Lorentz factor (γ)</p><p class="stat-value mono" id="wall-gamma">—</p><p class="stat-note">Time on the object runs γ times slower, as seen from outside.</p></div>
+          <div class="wall-tile"><p class="stat-label">Energy to get there (1 kg)</p><p class="stat-value mono" id="wall-energy">—</p><p class="stat-note" id="wall-energy-sub"></p></div>
+          <div class="wall-tile"><p class="stat-label">That's about…</p><p class="stat-value-sm" id="wall-compare">—</p></div>
+          <div class="wall-tile"><p class="stat-label">Trip to Proxima Centauri</p><p class="stat-value-sm mono" id="wall-trip">—</p></div>
+        </div>
+        <div class="wall-graphic" id="wall-graphic">
+          <div class="wall-gradient"></div>
+          <div class="wall-c-line"><span>c</span></div>
+          <div class="wall-marker" id="wall-marker"><span class="wall-marker-label">you are here</span></div>
+        </div>
+      </div>
+      <div class="callout callout--fact">
+        <p>Light itself has no mass, so it needs no energy to 'get up to speed' — it always travels at exactly c. That is also why you can't make a signal out of massive things (a rocket, a letter, an electron) and beat it.</p>
+      </div>
+    </div>
+
+    <!-- B. Causality story -->
+    <div class="sub-block reveal">
+      <h3>If messages could outrun light…</h3>
+      <p class="intro">Even if you somehow got past the energy wall, there is a deeper problem: a message faster than light would let some observers see the reply arrive before the question was asked. Step through the story.</p>
+      <div class="causal-layout" id="causal-stepper" tabindex="0" aria-label="Causality diagram stepper">
+        <div class="causal-diagram" id="causal-svg-wrap">
+          <svg id="causal-svg" viewBox="0 0 640 440" role="img" aria-label="Spacetime diagram: Alice sends a faster-than-light message to Bob, who replies from a moving ship — and the reply arrives before the question.">
+            <!-- grid -->
+            <g class="cg-grid">
+              <line x1="100" y1="0" x2="100" y2="440"></line>
+              <line x1="230" y1="0" x2="230" y2="440"></line>
+              <line x1="360" y1="0" x2="360" y2="440"></line>
+              <line x1="490" y1="0" x2="490" y2="440"></line>
+              <line x1="620" y1="0" x2="620" y2="440"></line>
+              <line x1="0" y1="40" x2="640" y2="40"></line>
+              <line x1="0" y1="170" x2="640" y2="170"></line>
+              <line x1="0" y1="300" x2="640" y2="300"></line>
+              <line x1="0" y1="430" x2="640" y2="430"></line>
+            </g>
+            <!-- axes -->
+            <g class="cg-axes">
+              <line x1="30" y1="428" x2="600" y2="428"></line>
+              <polygon points="600,424 610,428 600,432"></polygon>
+              <text x="320" y="422" class="cg-axis-label">distance (light-seconds) →</text>
+              <text x="14" y="240" class="cg-axis-label" transform="rotate(-90 14 240)">↑ time (seconds)</text>
+            </g>
+            <!-- light rays through A -->
+            <g class="cg-rays">
+              <line x1="100" y1="300" x2="500" y2="-100"></line>
+              <line x1="100" y1="300" x2="-300" y2="-100"></line>
+              <line x1="100" y1="300" x2="500" y2="700"></line>
+              <line x1="100" y1="300" x2="-300" y2="700"></line>
+              <text x="470" y="60" class="cg-label cg-label-sun">light</text>
+            </g>
+            <!-- Alice worldline -->
+            <g class="cg-alice">
+              <line x1="100" y1="430" x2="100" y2="14"></line>
+              <text x="100" y="10" class="cg-label cg-label-cyan" text-anchor="middle">Alice</text>
+            </g>
+            <!-- event A -->
+            <g class="cg-a">
+              <circle cx="100" cy="300" r="6"></circle>
+              <text x="114" y="304" class="cg-label cg-label-cyan">A · Alice sends (t = 0)</text>
+            </g>
+            <!-- FTL signal -->
+            <g class="cg-signal">
+              <line x1="100" y1="300" x2="360" y2="170"></line>
+              <polygon points="360,170 346,168 350,179"></polygon>
+              <text x="230" y="222" class="cg-label cg-label-amber" text-anchor="middle">message at 2× light speed</text>
+            </g>
+            <!-- event B -->
+            <g class="cg-b">
+              <circle cx="360" cy="170" r="6"></circle>
+              <text x="374" y="174" class="cg-label cg-label-amber">B · Bob receives (t = 1 s)</text>
+            </g>
+            <!-- Bob's ship -->
+            <g class="cg-ship">
+              <line x1="184.5" y1="365" x2="453.6" y2="66"></line>
+              <text x="300" y="120" class="cg-label cg-label-violet">Bob's ship (0.9 c)</text>
+            </g>
+            <!-- reply -->
+            <g class="cg-reply">
+              <line x1="360" y1="170" x2="100" y2="359.1"></line>
+              <polygon points="100,359.1 108,347 112,359"></polygon>
+              <text x="250" y="300" class="cg-label cg-label-reply" text-anchor="middle">reply at 2× light speed (in Bob's frame)</text>
+            </g>
+            <!-- event D -->
+            <g class="cg-d">
+              <circle cx="100" cy="359.1" r="7"></circle>
+              <circle class="cg-pulse" cx="100" cy="359.1" r="7"></circle>
+              <text x="114" y="372" class="cg-label cg-label-reply">D · reply arrives (t = −0.45 s)</text>
+            </g>
+            <!-- bracket -->
+            <g class="cg-bracket">
+              <path d="M88 300 h-8 v59.1 h8"></path>
+              <text x="76" y="335" class="cg-label cg-label-reply" text-anchor="end">0.45 s before she asked</text>
+            </g>
+            <!-- stamp -->
+            <g class="cg-stamp">
+              <rect x="200" y="180" width="240" height="70" rx="8"></rect>
+              <text x="320" y="224" text-anchor="middle">NOT ALLOWED</text>
+            </g>
+          </svg>
+        </div>
+        <div class="card causal-card">
+          <div class="causal-dots" id="causal-dots" aria-hidden="true"></div>
+          <p class="causal-counter" id="causal-counter">Step 1 of 5</p>
+          <h4 id="causal-step-title">Alice asks a question</h4>
+          <p id="causal-step-text">Alice stands at the origin. At time zero she sends a message to Bob, who is 2 light-seconds away. In this diagram time goes up and distance goes to the right, and light always travels along the dashed 45° lines.</p>
+          <div class="controls-row">
+            <button type="button" id="causal-prev" class="btn btn-secondary">Previous</button>
+            <button type="button" id="causal-next" class="btn btn-primary">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C. Myths -->
+    <div class="sub-block reveal">
+      <h3>Ideas that sound like loopholes</h3>
+      <p class="intro">Science fiction is full of ways around the light barrier. Here is what physics says about each.</p>
+      <div class="cards-grid myths-grid">
+        <div class="card myth-card myth-card-wide">
+          <span class="status-chip status-chip--red">Can't carry messages</span>
+          <h4>Quantum entanglement</h4>
+          <p>Entangled particles share correlated results, but each side's results look completely random on their own. You can't choose what your partner measures, so you can't encode a message. The pattern only shows up when both sides compare notes — over an ordinary, light-speed channel. Physicists call this the no-communication theorem.</p>
+          <div class="ent-demo">
+            <h5>Try it: can Bob tell what Alice did?</h5>
+            <div class="ent-controls">
+              <div id="ent-setting" role="presentation"></div>
+              <div class="controls-row">
+                <button type="button" id="ent-run" class="btn btn-primary btn-small">Run 20 entangled pairs</button>
+                <div class="ent-compare-wrap">
+                  <button type="button" id="ent-compare" class="btn btn-secondary btn-small" disabled title="needs a normal, light-speed channel">Compare notes</button>
+                  <p class="hint ent-compare-hint">(needs a normal, light-speed channel)</p>
+                </div>
+              </div>
+            </div>
+            <div class="ent-rows">
+              <p class="ent-row-label">Alice's results</p>
+              <div class="ent-bits" id="ent-alice-row"></div>
+              <p class="dim mono" id="ent-alice-pct">Alice's share of 1s: —</p>
+              <p class="ent-prompt dim">Look only at Bob's row. Can you tell which setting Alice used?</p>
+              <p class="ent-row-label">Bob's results</p>
+              <div class="ent-bits" id="ent-bob-row"></div>
+              <p class="dim mono" id="ent-bob-pct">Bob's share of 1s: —</p>
+            </div>
+            <div id="ent-summary" class="ent-summary" hidden></div>
+          </div>
+        </div>
+        <div class="card myth-card">
+          <span class="status-chip status-chip--amber">Speculative</span>
+          <h4>Wormholes and warp drives</h4>
+          <p>Some solutions of Einstein's equations allow shortcuts through space, but they need exotic matter with negative energy that has never been observed. And a usable shortcut could also bring back the causality paradox.</p>
+        </div>
+        <div class="card myth-card">
+          <span class="status-chip status-chip--amber">Never observed</span>
+          <h4>Tachyons</h4>
+          <p>Tachyons are hypothetical particles that always travel faster than light. No experiment has ever found one, and theories that include them run into serious problems.</p>
+        </div>
+        <div class="card myth-card">
+          <span class="status-chip status-chip--green">It was a bug</span>
+          <h4>The 2011 faster-than-light neutrinos</h4>
+          <p>In 2011 the OPERA experiment reported neutrinos arriving slightly early. In 2012 the team traced the result to a faulty fiber-optic cable connection and a clock problem — a networking bug, of all things. Later measurements agreed with light speed.</p>
+        </div>
+        <div class="card myth-card">
+          <span class="status-chip status-chip--green">Not a loophole</span>
+          <h4>Light is slower in glass</h4>
+          <p>Light slows down inside materials — about 32% slower in optical fiber. Particles can outrun light inside a material (that's the blue glow in reactor pools, called Cherenkov radiation), but nothing outruns light in a vacuum — which is what space is.</p>
+        </div>
+        <div class="card myth-card">
+          <span class="status-chip status-chip--green">Not a loophole</span>
+          <h4>Galaxies receding faster than light</h4>
+          <p>Very distant galaxies recede faster than light because the space between us is expanding, not because they fly through space that fast. Nobody can use this stretching to send a message faster than light.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- D. What exactly is c? -->
+    <div class="sub-block reveal">
+      <h3>Questions about c</h3>
+      <details class="accordion">
+        <summary>Why is it called c?</summary>
+        <p>From the Latin celeritas, meaning swiftness.</p>
+      </details>
+      <details class="accordion">
+        <summary>Is c only about light?</summary>
+        <p>No. c is the speed of everything that has no mass — light, and also gravitational waves — and it is the universal speed limit for cause and effect. Light just happens to be the thing we noticed first.</p>
+      </details>
+      <details class="accordion">
+        <summary>Is c always the same?</summary>
+        <p>In a vacuum, yes — for every observer, no matter how fast that observer is moving. That strange fact is the starting point of Einstein's special relativity (1905).</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DTN ============================== -->
+<section id="dtn" class="section" aria-labelledby="dtn-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">06 · HOW IT REALLY WORKS</p>
+      <h2 id="dtn-title">Building an internet that waits</h2>
+      <p class="lead">You can't beat the delay, so real engineers design around it. NASA, ESA and other space agencies are deploying a different kind of network: one that expects delays and disconnections.</p>
+    </div>
+
+    <!-- A. Page-load timeline -->
+    <div class="sub-block reveal">
+      <h3>Why everyday protocols struggle</h3>
+      <p>Loading a simple web page on Earth takes several back-and-forth exchanges: a DNS lookup, a TCP handshake, a TLS handshake, and finally the HTTP request. Each costs a full round trip. Fine at 20 milliseconds. Not fine at 25 minutes.</p>
+      <div class="card pl-widget">
+        <div class="pl-controls">
+          <div id="pl-dest" role="presentation"></div>
+          <div class="controls-row">
+            <button type="button" id="pl-play" class="btn btn-primary btn-small">Play</button>
+            <button type="button" id="pl-skip" class="btn btn-secondary btn-small">Skip to end</button>
+          </div>
+        </div>
+        <div class="pl-rows" id="pl-rows">
+          <div class="pl-row">
+            <p class="pl-label">Today's internet (TCP + TLS + HTTP)</p>
+            <div class="pl-track">
+              <div class="pl-seg pl-seg-blue" data-seg><div class="pl-fill"></div><span class="pl-seg-label">DNS lookup</span></div>
+              <div class="pl-seg pl-seg-violet" data-seg><div class="pl-fill"></div><span class="pl-seg-label">TCP handshake</span></div>
+              <div class="pl-seg pl-seg-blue" data-seg><div class="pl-fill"></div><span class="pl-seg-label">TLS handshake</span></div>
+              <div class="pl-seg pl-seg-violet" data-seg><div class="pl-fill"></div><span class="pl-seg-label">HTTP request + page</span></div>
+            </div>
+            <p class="pl-end mono" id="pl-end-1">—</p>
+          </div>
+          <div class="pl-row">
+            <p class="pl-label">Delay-tolerant (one request bundle)</p>
+            <div class="pl-track">
+              <div class="pl-seg pl-seg-cyan" data-seg2><div class="pl-fill"></div><span class="pl-seg-label">Request bundle → page bundle</span></div>
+            </div>
+            <p class="pl-end mono" id="pl-end-2">—</p>
+          </div>
+          <div class="pl-row">
+            <p class="pl-label">Cached near the destination</p>
+            <div class="pl-track">
+              <div class="pl-cache-marker"><span>Page is already there: 0 s (but it may be a little out of date)</span></div>
+            </div>
+            <p class="pl-end mono pl-end-green" id="pl-end-3">—</p>
+          </div>
+          <div class="pl-playhead" id="pl-playhead" hidden></div>
+        </div>
+        <div class="pl-ruler" id="pl-ruler" aria-hidden="true"></div>
+      </div>
+      <div class="callout callout--warn">
+        <p>Simplified: this ignores transmission time, packet loss and extra files (images, scripts). Real pages need even more round trips.</p>
+      </div>
+      <h4 class="subhead">What else breaks?</h4>
+      <ul class="plain-list">
+        <li>TCP's retransmission timers expect round trips measured in milliseconds, so it would keep re-sending data that is merely still on its way.</li>
+        <li>Congestion control learns from acknowledgments that arrive far too late to be useful.</li>
+        <li>Everything assumes a continuous end-to-end path. Planets rotate, orbiters pass overhead and the Sun gets in the way — the path comes and goes.</li>
+        <li>Servers, DNS and databases live on Earth. Every lookup would cross the void.</li>
+      </ul>
+    </div>
+
+    <!-- B. DTN -->
+    <div class="sub-block reveal">
+      <h3>DTN: the postal service of space</h3>
+      <p>Delay/Disruption-Tolerant Networking (DTN) is a family of protocols built for these conditions. Its core idea is the <strong>bundle</strong>: a self-contained message that carries everything a node needs to forward it. Instead of demanding a live end-to-end connection, each node keeps the bundle in storage until the next hop becomes available — then sends it on. This is called <strong>store-and-forward</strong>. Think of the postal system instead of a phone call.</p>
+      <p>The Bundle Protocol (version 7 is described in RFC 9171) moves bundles between nodes. The Licklider Transmission Protocol (LTP, RFC 5326) handles reliable delivery across a single long-delay link. Both are named for ideas that go back to 1963, when J. C. R. Licklider wrote about an “Intergalactic Computer Network.”</p>
+
+      <div class="card sfd-widget">
+        <div class="sfd" id="sfd">
+          <div class="sfd-flow" id="sfd-flow">
+            <div class="sfd-node" id="sfd-node-0">
+              <h4>Mission Control</h4>
+              <p class="sfd-node-sub">Earth</p>
+              <div class="sfd-storage" hidden><span class="sfd-storage-count mono"></span><span class="sfd-badges"></span></div>
+            </div>
+            <div class="sfd-link" data-link="0">
+              <div class="sfd-link-line"></div>
+              <label class="sfd-toggle">
+                <input type="checkbox" checked data-toggle="0">
+                <span class="sfd-switch" aria-hidden="true"></span>
+                <span class="sfd-toggle-label mono">Link 1: Up</span>
+              </label>
+            </div>
+            <div class="sfd-node" id="sfd-node-1">
+              <h4>DSN antenna</h4>
+              <p class="sfd-node-sub">Earth</p>
+              <div class="sfd-storage" hidden><span class="sfd-storage-count mono"></span><span class="sfd-badges"></span></div>
+            </div>
+            <div class="sfd-link" data-link="1">
+              <div class="sfd-link-line"></div>
+              <div class="sfd-sun" id="sfd-sun" hidden aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="6" fill="#FFD166"></circle><g stroke="#FFD166" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="23"></line><line x1="1" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="23" y2="12"></line><line x1="4" y1="4" x2="6" y2="6"></line><line x1="18" y1="18" x2="20" y2="20"></line><line x1="4" y1="20" x2="6" y2="18"></line><line x1="18" y1="6" x2="20" y2="4"></line></g></svg>
+              </div>
+              <label class="sfd-toggle">
+                <input type="checkbox" checked data-toggle="1">
+                <span class="sfd-switch" aria-hidden="true"></span>
+                <span class="sfd-toggle-label mono">Link 2: Up</span>
+              </label>
+            </div>
+            <div class="sfd-node" id="sfd-node-2">
+              <h4>Mars orbiter</h4>
+              <p class="sfd-node-sub">Mars</p>
+              <div class="sfd-storage" hidden><span class="sfd-storage-count mono"></span><span class="sfd-badges"></span></div>
+            </div>
+            <div class="sfd-link" data-link="2">
+              <div class="sfd-link-line"></div>
+              <label class="sfd-toggle">
+                <input type="checkbox" checked data-toggle="2">
+                <span class="sfd-switch" aria-hidden="true"></span>
+                <span class="sfd-toggle-label mono">Link 3: Up</span>
+              </label>
+            </div>
+            <div class="sfd-node" id="sfd-node-3">
+              <h4>Rover</h4>
+              <p class="sfd-node-sub">Mars</p>
+              <div class="sfd-storage" hidden><span class="sfd-storage-count mono"></span><span class="sfd-badges"></span></div>
+            </div>
+            <div class="sfd-bundles" id="sfd-bundles"></div>
+          </div>
+        </div>
+        <div class="sfd-controls">
+          <div id="sfd-mode" role="presentation"></div>
+          <div class="controls-row">
+            <button type="button" id="sfd-send" class="btn btn-primary btn-small">Send bundle</button>
+            <button type="button" id="sfd-conjunction" class="btn btn-secondary btn-small">Solar conjunction</button>
+            <button type="button" id="sfd-reset" class="btn btn-secondary btn-small">Reset</button>
+          </div>
+          <p class="mono sfd-counters" id="sfd-counters">Sent 0 · Stored 0 · Delivered 0 · Lost 0</p>
+          <p class="sfd-log dim" id="sfd-log"></p>
+          <p class="sfd-toast" id="sfd-toast" hidden>Connection failed: no end-to-end path.</p>
+        </div>
+      </div>
+      <p class="intro">Try it: send a bundle, then switch Link 2 off. In DTN mode the bundle waits patiently and continues when the link returns. In Classic mode it is simply lost.</p>
+    </div>
+
+    <!-- C. Hardware -->
+    <div class="sub-block reveal">
+      <h3>The hardware that makes it work</h3>
+      <div class="cards-grid">
+        <div class="card">
+          <h4>Deep Space Network</h4>
+          <p>NASA's Deep Space Network uses giant radio antennas at three sites: Goldstone (California), Madrid (Spain) and Canberra (Australia). They are spaced roughly a third of the way around the planet, so as Earth rotates at least one of them can always see a given spacecraft.</p>
+          <canvas id="dsn-canvas" class="dsn-canvas" role="img" aria-label="Animation: the Earth rotating so that one of three antenna sites always faces a spacecraft"></canvas>
+          <p class="mono dsn-status" id="dsn-status">Talking to: —</p>
+          <button type="button" id="dsn-pause" class="btn btn-secondary btn-small">Pause</button>
+          <p class="hint" id="dsn-reduced" hidden>Animation disabled by your system settings.</p>
+        </div>
+        <div class="card">
+          <h4>Relay orbiters</h4>
+          <p>Mars rovers are small. They upload data by UHF radio to orbiters that pass overhead for around ten minutes at a time. The orbiters have bigger antennas and more power, and relay the data to Earth. It is already a two-hop interplanetary network.</p>
+        </div>
+        <div class="card">
+          <h4>Laser communication</h4>
+          <p>Radio waves spread out; laser beams stay narrow, so far more data fits through. In 2013 a laser link from lunar orbit (LLCD) delivered 622 Mbps. In December 2023 the Deep Space Optical Communications experiment on the Psyche spacecraft sent data at 267 Mbps from about 31 million km — including a short video of a cat named Taters. Lasers raise bandwidth. They do not change the delay.</p>
+        </div>
+        <div class="card">
+          <h4>Autonomy</h4>
+          <p>A 25-minute round trip means nobody can joystick a rover. Controllers upload a plan for the day; the rover carries it out on its own and reports back. Autonomy is a networking feature too.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- D. Conjunction -->
+    <div class="sub-block reveal">
+      <h3>When the Sun gets in the way</h3>
+      <p>About every 26 months, Mars passes behind the Sun as seen from Earth — a solar conjunction. Radio signals that pass close to the Sun are scrambled by its hot, turbulent gas. For roughly two weeks, missions stop sending commands and rely on plans uploaded in advance. DTN-style thinking turns this from a crisis into a scheduled gap: queue the bundles, and send them when contact returns.</p>
+    </div>
+
+    <!-- E. Design rules -->
+    <div class="sub-block reveal">
+      <h3>Six rules for life at a delay</h3>
+      <ol class="rules-grid">
+        <li class="card rule-card"><span class="rule-num mono">1</span><h4>Send complete thoughts</h4><p>One message should contain everything the other side needs.</p></li>
+        <li class="card rule-card"><span class="rule-num mono">2</span><h4>Push, don't pull</h4><p>Send data that will probably be needed before anyone asks for it.</p></li>
+        <li class="card rule-card"><span class="rule-num mono">3</span><h4>Cache close to the user</h4><p>Keep copies on relay nodes near the destination.</p></li>
+        <li class="card rule-card"><span class="rule-num mono">4</span><h4>Expect disconnection</h4><p>Store the message, then forward it when the link returns.</p></li>
+        <li class="card rule-card"><span class="rule-num mono">5</span><h4>Schedule around contact windows</h4><p>Orbits are predictable, so contacts can be planned in advance.</p></li>
+        <li class="card rule-card"><span class="rule-num mono">6</span><h4>Be autonomous</h4><p>Don't wait for Earth to make every decision.</p></li>
+      </ol>
+    </div>
+
+    <!-- F. Milestones -->
+    <div class="sub-block reveal">
+      <h3>Milestones</h3>
+      <ol class="milestones">
+        <li><span class="ms-year mono">1963</span><p>J. C. R. Licklider writes about an “Intergalactic Computer Network.”</p></li>
+        <li><span class="ms-year mono">1969</span><p>ARPANET carries its first message.</p></li>
+        <li><span class="ms-year mono">1977</span><p>Voyager 1 launches. Nearly 50 years later its signal needs about 23½ hours to reach Earth, and it still sends data at about 160 bits per second with a transmitter of roughly 23 watts.</p></li>
+        <li><span class="ms-year mono">1998</span><p>Vint Cerf and engineers at NASA's Jet Propulsion Laboratory begin designing an “Interplanetary Internet.”</p></li>
+        <li><span class="ms-year mono">2008</span><p>Delay-tolerant networking is tested in deep space for the first time, aboard the EPOXI spacecraft.</p></li>
+        <li><span class="ms-year mono">2012</span><p>Curiosity lands on Mars. The signal that it had begun its descent arrives after 13 min 48 s — the landing is already over.</p></li>
+        <li><span class="ms-year mono">2013</span><p>A laser link from lunar orbit delivers 622 Mbps to Earth (LLCD).</p></li>
+        <li><span class="ms-year mono">2010s</span><p>DTN begins carrying real data on the International Space Station.</p></li>
+        <li><span class="ms-year mono">2023</span><p>The laser experiment on the Psyche spacecraft sends data at 267 Mbps from about 31 million km (DSOC).</p></li>
+        <li><span class="ms-year mono">Planned</span><p>LunaNet: NASA and partners define an interoperable communication and navigation network for the Moon, built on DTN.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== QUIZ ============================== -->
+<section id="quiz" class="section" aria-labelledby="quiz-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">07 · QUIZ</p>
+      <h2 id="quiz-title">Test your mission knowledge</h2>
+      <p class="lead">Ten questions. No timer. Answers are explained as you go.</p>
+    </div>
+    <div class="card quiz-card reveal" id="quiz-card">
+      <div class="quiz-head">
+        <p class="quiz-progress-label" id="quiz-progress-label">Question 1 of 10</p>
+        <div class="quiz-progress" aria-hidden="true"><div class="quiz-progress-fill" id="quiz-progress-bar"></div></div>
+        <p class="quiz-score-pill mono" id="quiz-score-pill">Score: 0</p>
+      </div>
+      <h3 class="quiz-question" id="quiz-question"></h3>
+      <div class="quiz-options" id="quiz-options" role="group" aria-label="Answer options"></div>
+      <div class="callout callout--fact" id="quiz-explanation" hidden></div>
+      <div class="controls-row" id="quiz-actions" hidden>
+        <button type="button" id="quiz-next" class="btn btn-primary">Next question</button>
+      </div>
+      <div class="quiz-results" id="quiz-results" hidden>
+        <p class="quiz-final-score mono" id="quiz-final-score"></p>
+        <h3 id="quiz-rating-title"></h3>
+        <p id="quiz-rating-text"></p>
+        <div class="controls-row">
+          <button type="button" id="quiz-restart" class="btn btn-primary">Restart quiz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== GLOSSARY ============================== -->
+<section id="glossary" class="section" aria-labelledby="glossary-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">REFERENCE</p>
+      <h2 id="glossary-title">Glossary</h2>
+    </div>
+    <div class="card reveal">
+      <dl class="terms glossary" id="glossary-dl"></dl>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer id="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="23" r="4" fill="#3FA0FF"></circle>
+        <circle cx="24" cy="9" r="3" fill="#E8845A"></circle>
+        <path d="M12 20 L21 12" stroke="#5CE1E6" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 3" fill="none"></path>
+      </svg>
+      <p>The Interplanetary Internet</p>
+    </div>
+    <p class="footer-text">An interactive educational guide. Numbers are rounded; real distances change constantly as planets move. The chat characters and the colony on Proxima b are fictional. This page makes no network requests and stores no data.</p>
+    <h2 class="footer-heading">Further reading</h2>
+    <ul class="footer-links" id="footer-links"></ul>
+    <div class="footer-dev">
+      <img src="assets/soroosh-bagherieh.jpg" alt="Soroosh Bagherieh" width="72" height="72" class="footer-dev-photo">
+      <div class="footer-dev-info">
+        <p class="footer-dev-label">Developer</p>
+        <p class="footer-dev-name">Soroosh Bagherieh</p>
+        <a href="https://github.com/SorooshBa" target="_blank" rel="noopener noreferrer" class="footer-dev-link">github.com/SorooshBa</a>
+      </div>
+    </div>
+    
+  </div>
+</footer>
+
+<script defer src="js/core.js"></script>
+<script defer src="js/data.js"></script>
+<script defer src="js/starfield.js"></script>
+<script defer src="js/simulator.js"></script>
+<script defer src="js/chat.js"></script>
+<script defer src="js/light.js"></script>
+<script defer src="js/limit.js"></script>
+<script defer src="js/dtn.js"></script>
+<script defer src="js/quiz.js"></script>
+<script defer src="js/main.js"></script>
+</body>
+</html>
